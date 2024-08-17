@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anarchy for you</title>
+    <title>AnarchyForYouPage</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -138,6 +138,26 @@
         .discord-link:hover {
             color: #5865F2;
         }
+        .online-users {
+            position: fixed;
+            left: 20px;
+            top: 20px;
+            width: auto;
+            background-color: transparent;
+            border: none;
+            padding: 0;
+        }
+        .online-users ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .online-users li {
+            margin-bottom: 5px;
+            padding: 0;
+            text-align: left;
+            font-size: 1.2em;
+        }
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -145,10 +165,16 @@
             h1 {
                 font-size: 2em;
             }
+            .online-users {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
+    <div class="online-users">
+        <ul id="user-list"></ul>
+    </div>
     <div class="container">
         <a href="https://discord.gg/wq76guDMfF" class="discord-link" target="_blank">Join Discord</a>
         <h1>𝙰𝚗𝚊𝚛𝚌𝚑𝚢 𝚏𝚘𝚛 𝚢𝚘𝚞</h1>
@@ -184,7 +210,7 @@
         </div>
     </div>
     <div class="footer">
-        Последнее обновление: 17 августа, 12:28
+        Последнее обновление: 17 августа, 18:41
     </div>
     <script>
         function copyToClipboard() {
@@ -212,6 +238,30 @@
             const green = Math.min(255, percentage * 2.55);
             const blue = 100;
             progressBar.style.backgroundColor = `rgb(${red}, ${green}, ${blue})`;
+
+            function fetchPlayers() {
+                fetch('https://api.mcsrvstat.us/2/c6.play2go.cloud:20078')
+                    .then(response => response.json())
+                    .then(data => {
+                        const userList = document.getElementById("user-list");
+                        userList.innerHTML = '';
+
+                        if (data.players && data.players.list) {
+                            data.players.list.forEach(user => {
+                                const li = document.createElement("li");
+                                li.textContent = user;
+                                userList.appendChild(li);
+                            });
+                        } else {
+                            const li = document.createElement("li");
+                            li.textContent = 'Players: 0';
+                            userList.appendChild(li);
+                        }
+                    });
+            }
+
+            fetchPlayers();
+            setInterval(fetchPlayers, 35000);
         });
     </script>
 </body>
